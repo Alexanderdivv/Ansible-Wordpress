@@ -1,0 +1,36 @@
+#Install LAMP Stack
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: install python 2
+    raw: test -e /usr/bin/python || (sudo apt -y update && sudo apt install -y python-minimal)
+  - name: Add ppa Repository
+    become: true
+    apt_repository: 
+      repo: ppa:ondrej/php
+
+  # - name: install hard php7.2-mysql 
+  #   raw: sudo add-apt-repository ppa:ondrej/php && sudo apt-get update && sudo apt-get install php7.2
+  - name: Install hard
+    action: apt pkg={{ item }} state=present
+    with_items:
+       - unzip
+       - mysql-server
+       - mysql-client
+       - apache2
+       - php-mysql
+       - php-xmlrpc
+       - php-soap
+       - php-gd
+       - php
+       - python-mysqldb
+
+- hosts: servers
+        
+  roles:
+  - server
+  - php
+  - mysql
+  - wordpress
+
